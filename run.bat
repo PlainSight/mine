@@ -1,2 +1,2 @@
-javac -cp "comp100.jar" *.java
-java -cp "*" Mine
+javac -cp "./comp100.jar" Mine.java
+java -cp ".;*" Mine
