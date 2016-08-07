@@ -15,6 +15,11 @@ func init() {
 	runtime.LockOSThread()
 }
 
+const (
+	WIDTH int = 600
+	HALF float32 = 300
+)
+
 func handleClick(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey) {
 	if action != glfw.Press {
 		return
@@ -44,7 +49,7 @@ func setup() {
 	glfw.WindowHint(glfw.Resizable, glfw.False)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	window, err := glfw.CreateWindow(600, 600, "Cube", nil, nil)
+	window, err := glfw.CreateWindow(WIDTH, WIDTH, "Cube", nil, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -74,41 +79,37 @@ func setupScene() {
 func destroyScene() {
 }
 
-func drawScene() {
-	gl.Clear(gl.COLOR_BUFFER_BIT)
+func screenCoordToGrid(x int, y int) (x1 int, y1 int) {
+	return x / GRIDLENGTH, y / GRIDLENGTH
+}
 
-	gl.LoadIdentity()
+func drawSquare(x int, y int, w int) {
+	var x1, x2, y1, y2 float32
+
+	x1 = (float32(x) - HALF) / HALF
+	y1 = (HALF - float32(y)) / HALF
+	x2 = (float32(x + w) - HALF) / HALF
+	y2 = (HALF - float32(y + w)) / HALF
 
 	gl.Color4f(1, 0, 0, 1)
 
 	gl.Begin(gl.QUADS)
 
-	gl.Vertex3f(0, 600, 1)
-	gl.Vertex3f(600, 600, 1)
-	gl.Vertex3f(600, 0, 1)
-	gl.Vertex3f(0, 0, 1)
+	gl.Vertex3f(x1, y1, 1)
+	gl.Vertex3f(x2, y1, 1)
+	gl.Vertex3f(x2, y2, 1)
+	gl.Vertex3f(x1, y2, 1)
 
 	gl.End()
+}
 
-	gl.Color4f(0, 1, 0, 1)
+func drawScene() {
+	gl.Clear(gl.COLOR_BUFFER_BIT)
 
-	gl.Begin(gl.QUADS)
+	gl.LoadIdentity()
 
-	gl.Vertex3f(0, 300, 1)
-	gl.Vertex3f(300, 300, 1)
-	gl.Vertex3f(300, 0, 1)
-	gl.Vertex3f(0, 0, 1)
-
-	gl.End()
-
-	gl.Color4f(0, 0, 1, 1)
-
-	gl.Begin(gl.QUADS)
-
-	gl.Vertex3f(600, 300, 1)
-	gl.Vertex3f(300, 300, 1)
-	gl.Vertex3f(300, 600, 1)
-	gl.Vertex3f(600, 600, 1)
-
-	gl.End()
+	for i := 0; i < 12; i++ {
+		drawSquare(i * 50, i*50, 50)
+	}
+	
 }
