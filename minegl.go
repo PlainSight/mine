@@ -62,7 +62,7 @@ func setup() {
 	for !window.ShouldClose() {
 		drawScene()
 		window.SwapBuffers()
-		glfw.PollEvents()
+		glfw.WaitEvents()
 	}
 }
 
@@ -81,7 +81,8 @@ func drawSquare(x float32, y float32, w float32, color int, count int) {
 	x2 := ((x + w) - HALF) / HALF
 	y2 := (HALF - (y + w)) / HALF
 
-	chig := w / (HALF * 12)
+	countBlockSize := 3.0 / HALF
+	countBlockSpace := 4.0 / HALF
 
 	//color 0 = white, 1 = blue, 2 = pink
 
@@ -91,7 +92,7 @@ func drawSquare(x float32, y float32, w float32, color int, count int) {
 		case color == 1:
 			gl.Color4f(0, 0, 1, 1)
 		case color == 2:
-			gl.Color4f(0.5, 0, 0, 1)
+			gl.Color4f(1, 0.7, 0.7, 1)
 	}
 
 	gl.Begin(gl.QUADS)
@@ -107,10 +108,12 @@ func drawSquare(x float32, y float32, w float32, color int, count int) {
 		for i := 0; i < count; i++ {
 			fc := float32(i + 2)
 
-			gl.Vertex3f(x1 + (fc * chig), y1, 1)
-			gl.Vertex3f(x1 + (fc * chig) + chig / 2, y1, 1)
-			gl.Vertex3f(x1 + (fc * chig) + chig / 2, y1 - chig, 1)
-			gl.Vertex3f(x1 + (fc * chig), y1 - chig, 1)
+			y3 := (y1 + y2) / 2
+
+			gl.Vertex3f(x1 + (fc * countBlockSpace), y3, 1)
+			gl.Vertex3f(x1 + (fc * countBlockSpace) + countBlockSize, y3, 1)
+			gl.Vertex3f(x1 + (fc * countBlockSpace) + countBlockSize, y3 - countBlockSize, 1)
+			gl.Vertex3f(x1 + (fc * countBlockSpace), y3 - countBlockSize, 1)
 		} 
 	}
 

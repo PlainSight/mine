@@ -2,7 +2,6 @@ package main
 
 import (
 	"math/rand"
-	"fmt"
 )
 
 func main() {
@@ -101,7 +100,6 @@ func flagClick(x uint, y uint) {
 }
 
 func revealClick(x uint, y uint) {
-	fmt.Printf("revealing %d %d\n", x, y)
 	reveal(x, y)
 	winCheck()
 }
