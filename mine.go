@@ -21,6 +21,7 @@ var (
 	grid [GRIDLENGTH][GRIDLENGTH]int
 	win bool
 	lose bool
+	lastState bool
 )
 
 func uMin(a uint, b uint) uint {
@@ -40,6 +41,7 @@ func uDec(a uint) uint {
 }
 
 func startGame() {
+	lastState = win && !lose
 	win = false
 	lose = false
 

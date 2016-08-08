@@ -90,7 +90,11 @@ func drawSquare(x float32, y float32, w float32, color int, count int) {
 		case color == 0:
 			gl.Color4f(1, 1, 1, 1)
 		case color == 1:
-			gl.Color4f(0, 0, 1, 1)
+			if lastState {
+				gl.Color4f(0.25, 0.88, 0.82, 1)
+			} else {
+				gl.Color4f(0, 0, 1, 1)
+			}
 		case color == 2:
 			gl.Color4f(1, 0.7, 0.7, 1)
 	}
