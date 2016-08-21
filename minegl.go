@@ -29,8 +29,8 @@ var (
 func handleResize(w *glfw.Window, width int, height int) {
 	WIDTH = width
 	HEIGHT = height
-	XSCALE = float32(WIDTH / 16)
-	YSCALE = float32(HEIGHT / 16)
+	XSCALE = float32(WIDTH) / 16
+	YSCALE = float32(HEIGHT) / 16
 	setupScene()
 	drawScene()
 }
