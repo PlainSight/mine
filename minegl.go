@@ -18,15 +18,22 @@ func init() {
 	runtime.LockOSThread()
 }
 
-const (
-	WIDTH int = 720
-	HALF float32 = 360
-	SCALE float32 = 45
-)
-
 var (
+	WIDTH int = 720
+	HEIGHT int = 720
+	XSCALE float32 = float32(WIDTH) / 16
+	YSCALE float32 = float32(HEIGHT) / 16
 	numbers uint32
 )
+
+func handleResize(w *glfw.Window, width int, height int) {
+	WIDTH = width
+	HEIGHT = height
+	XSCALE = float32(WIDTH / 16)
+	YSCALE = float32(HEIGHT / 16)
+	setupScene()
+	drawScene()
+}
 
 func handleClick(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey) {
 	if action != glfw.Press {
@@ -36,11 +43,11 @@ func handleClick(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mo
 	xpos, ypos := w.GetCursorPos()
 
 	if button == glfw.MouseButton2 {
-		flagClick(uint(xpos/float64(SCALE)), uint(ypos/float64(SCALE)))
+		flagClick(uint(xpos/float64(XSCALE)), uint(ypos/float64(YSCALE)))
 	}
 
 	if button == glfw.MouseButton1 {
-		revealClick(uint(xpos/float64(SCALE)), uint(ypos/float64(SCALE)))
+		revealClick(uint(xpos/float64(XSCALE)), uint(ypos/float64(YSCALE)))
 	}
 }
 
@@ -50,10 +57,10 @@ func setup() {
 	}
 	defer glfw.Terminate()
 
-	glfw.WindowHint(glfw.Resizable, glfw.False)
+	glfw.WindowHint(glfw.Resizable, glfw.True)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-	window, err := glfw.CreateWindow(WIDTH, WIDTH, "Cube", nil, nil)
+	window, err := glfw.CreateWindow(WIDTH, HEIGHT, "Cube", nil, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -69,6 +76,7 @@ func setup() {
 	setupScene()
 
 	window.SetMouseButtonCallback(handleClick);
+	window.SetSizeCallback(handleResize);
 
 	for !window.ShouldClose() {
 		drawScene()
@@ -109,19 +117,22 @@ func loadNumbersTexture() uint32 {
 func setupScene() {
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadIdentity()
+	gl.Ortho(0, float64(WIDTH), float64(HEIGHT), 0, -1, 1)	
+	gl.Viewport(0, 0, int32(WIDTH), int32(HEIGHT))	
 }
 
 func destroyScene() {
 }
 
-func drawNumber(x float32, y float32, w float32, number int) {
+func drawNumber(x float32, y float32, w float32, h float32, number int) {
 
-	margin := w / 4
+	xmargin := w / 4
+	ymargin := h / 4
 
-	x1 := ((x + margin) - HALF) / HALF
-	y1 := (HALF - (y + margin)) / HALF
-	x2 := (((x - margin) + w) - HALF) / HALF
-	y2 := (HALF - ((y - margin) + w)) / HALF
+	x1 := x + xmargin
+	y1 := y + ymargin
+	x2 := x - xmargin + w
+	y2 := y - ymargin + h
 
 	gl.BindTexture(gl.TEXTURE_2D, numbers)
 
@@ -144,12 +155,12 @@ func drawNumber(x float32, y float32, w float32, number int) {
 	gl.End()
 }
 
-func drawSquare(x float32, y float32, w float32, color int, count int) {
+func drawSquare(x float32, y float32, w float32, h float32, color int, count int) {
 
-	x1 := (x - HALF) / HALF
-	y1 := (HALF - y) / HALF
-	x2 := ((x + w) - HALF) / HALF
-	y2 := (HALF - (y + w)) / HALF
+	x1 := x
+	y1 := y
+	x2 := x + w
+	y2 := y + h
 
 	//color 0 = white, 1 = blue, 2 = pink
 
@@ -176,13 +187,12 @@ func drawSquare(x float32, y float32, w float32, color int, count int) {
 	gl.End()
 
 	if color == 0 && count > 0 {
-		drawNumber(x, y, w, count)
+		drawNumber(x, y, w, h, count)
 	}
 }
 
 func drawScene() {
 	gl.Clear(gl.COLOR_BUFFER_BIT)
-	gl.LoadIdentity()
 
 	for x := uint(0); x < GRIDLENGTH; x++ {
 		for y := uint(0); y < GRIDLENGTH; y++ {
@@ -195,7 +205,7 @@ func drawScene() {
 				color = 0
 			}
 
-			drawSquare(float32(x) * SCALE, float32(y) * SCALE, SCALE, color, grid[x][y])
+			drawSquare(float32(x) * XSCALE, float32(y) * YSCALE, XSCALE, YSCALE, color, grid[x][y])
 		}
 	}
 }
