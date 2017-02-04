@@ -10,18 +10,18 @@ func main() {
 }
 
 const (
-	MINES uint = 40
+	MINES      uint = 40
 	GRIDLENGTH uint = 16
 )
 
 var (
 	firstClick bool
-	revealed [GRIDLENGTH][GRIDLENGTH]bool
-	flagged [GRIDLENGTH][GRIDLENGTH]bool
-	grid [GRIDLENGTH][GRIDLENGTH]int
-	win bool
-	lose bool
-	lastState bool
+	revealed   [GRIDLENGTH][GRIDLENGTH]bool
+	flagged    [GRIDLENGTH][GRIDLENGTH]bool
+	grid       [GRIDLENGTH][GRIDLENGTH]int
+	win        bool
+	lose       bool
+	lastState  bool
 )
 
 func uMin(a uint, b uint) uint {
@@ -41,7 +41,7 @@ func uDec(a uint) uint {
 }
 
 func startGame() {
-	lastState = win && !lose
+	lastState = win
 	win = false
 	lose = false
 
@@ -63,8 +63,8 @@ func startGame() {
 
 		grid[x][y] = -1
 
-		for ix := uDec(x); ix < uMin(GRIDLENGTH, x + 2); ix++ {
-			for iy := uDec(y); iy < uMin(GRIDLENGTH, y + 2); iy++ {
+		for ix := uDec(x); ix < uMin(GRIDLENGTH, x+2); ix++ {
+			for iy := uDec(y); iy < uMin(GRIDLENGTH, y+2); iy++ {
 				if grid[ix][iy] != -1 {
 					grid[ix][iy]++
 				}
@@ -88,8 +88,8 @@ func reveal(x uint, y uint) {
 }
 
 func find(x uint, y uint) {
-	for ix := uDec(x); ix < uMin(GRIDLENGTH, x + 2); ix++ {
-		for iy := uDec(y); iy < uMin(GRIDLENGTH, y + 2); iy++ {
+	for ix := uDec(x); ix < uMin(GRIDLENGTH, x+2); ix++ {
+		for iy := uDec(y); iy < uMin(GRIDLENGTH, y+2); iy++ {
 			if ix != x || iy != y {
 				reveal(ix, iy)
 			}
@@ -120,13 +120,8 @@ func winCheck() {
 		win = true
 	}
 
-	if lose {
+	if win || lose {
 		//show loss
-		startGame()
-	}
-
-	if !lose && win {
-		//show win
 		startGame()
 	}
 }

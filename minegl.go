@@ -20,16 +20,16 @@ func init() {
 var (
 	cWIDTH  = 720
 	cHEIGHT = 720
-	xSCALE  = float32(cWIDTH) / 16
-	ySCALE  = float32(cHEIGHT) / 16
+	xSCALE  = float32(cWIDTH) / float32(GRIDLENGTH)
+	ySCALE  = float32(cHEIGHT) / float32(GRIDLENGTH)
 	numbers uint32
 )
 
-func handleResize(w *glfw.Window, cWIDTH int, cHEIGHT int) {
-	cWIDTH = cWIDTH
-	cHEIGHT = cHEIGHT
-	xSCALE = float32(cWIDTH) / 16
-	ySCALE = float32(cHEIGHT) / 16
+func handleResize(w *glfw.Window, width int, height int) {
+	cWIDTH = width
+	cHEIGHT = height
+	xSCALE = float32(cWIDTH) / float32(GRIDLENGTH)
+	ySCALE = float32(cHEIGHT) / float32(GRIDLENGTH)
 	setupScene()
 	drawScene()
 }
